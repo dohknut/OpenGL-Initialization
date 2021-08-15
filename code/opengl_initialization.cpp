@@ -29,8 +29,6 @@ global_var gl_gen_frame_buffers *glGenFramebuffers;
 global_var gl_gen_render_buffers *glGenRenderbuffers;
 global_var gl_get_shader_iv *glGetShaderiv;
 
-global_var HGLRC global_gl_rc;
-
 // TODO(Luke): Probably return success/error.
 internal void
 Win32LoadWGLExtensions()
