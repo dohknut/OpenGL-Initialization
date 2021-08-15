@@ -6,5 +6,5 @@ SET LinkerFlags=Opengl32.lib User32.lib Gdi32.lib Winmm.lib Kernel32.lib
 IF NOT EXIST ..\..\.build\opengl_initialization MKDIR ..\..\..\.build\opengl_initialization
 PUSHD ..\..\..\.build\opengl_initialization
 
-cl %CompilerFlags% ..\..\projects\OpenGL-Initialization\code\opengl_initialization.cpp -Fmwin32_opegnl_initialization.map /link %LinkerFlags% 
+cl %CompilerFlags% ..\..\projects\OpenGL-Initialization\code\opengl_initialization.cpp -Fmwin32_opengl_initialization.map /link %LinkerFlags% 
 POPD
