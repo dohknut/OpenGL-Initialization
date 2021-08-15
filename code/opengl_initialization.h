@@ -9,9 +9,6 @@
 #define WGL_CONTEXT_FLAGS_ARB                     0x2094
 #define WGL_CONTEXT_PROFILE_MASK_ARB              0x9126
 
-#define WGL_CONTEXT_DEBUG_BIT_ARB                 0x0001
-#define WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB    0x0002
-
 #define WGL_CONTEXT_CORE_PROFILE_BIT_ARB          0x00000001
 #define WGL_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB 0x00000002
 
@@ -20,18 +17,9 @@
 #define WGL_SUPPORT_OPENGL_ARB                    0x2010
 #define WGL_DOUBLE_BUFFER_ARB                     0x2011
 #define WGL_PIXEL_TYPE_ARB                        0x2013
-#define WGL_COLOR_BITS_ARB                        0x2014
 
 #define WGL_TYPE_RGBA_ARB                         0x202B
 #define WGL_FULL_ACCELERATION_ARB                 0x2027
-
-#define WGL_FRAMEBUFFER_SRGB_CAPABLE_ARB          0x20A9
-
-#define WGL_RED_BITS_ARB                          0x2015
-#define WGL_GREEN_BITS_ARB                        0x2017
-#define WGL_BLUE_BITS_ARB                         0x2019
-#define WGL_ALPHA_BITS_ARB                        0x201B
-#define WGL_DEPTH_BITS_ARB                        0x2022
 
 #define GL_VERSION                        0x1F02
 #define GL_ARRAY_BUFFER                   0x8892

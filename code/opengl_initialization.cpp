@@ -204,6 +204,69 @@ Win32InitOpenGL(HWND window)
     return glrc;
 }
 
+void DrawTriangle(int window_width, int window_height)
+{
+    glViewport(0, 0, window_width, window_height);
+    char *vertex_shader_source = "#version 330 core\n"
+        "layout (location = 0) in vec3 aPos;\n"
+        "void main()\n"
+        "{\n"
+        "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+        "}\0";
+    char *fragment_shader_source = "#version 330 core\n"
+        "out vec4 FragColor;\n"
+        "void main()\n"
+        "{\n"
+        "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+        "}\n\0";
+    GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertex_shader, 1, &vertex_shader_source, 0);
+    glCompileShader(vertex_shader);
+    int success;
+    glGetShaderiv(vertex_shader, GL_COMPILE_STATUS, &success);
+    if(!success)
+    {
+        OutputDebugStringA("vertex_shader_failed");
+    }
+    
+    GLuint fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragment_shader, 1, &fragment_shader_source, 0);
+    glCompileShader(fragment_shader);
+    glGetShaderiv(fragment_shader, GL_COMPILE_STATUS, &success);
+    if(!success)
+    {
+        OutputDebugStringA("compile_shader_failed");
+    }
+    
+    GLuint shader_program = glCreateProgram();
+    glAttachShader(shader_program, vertex_shader);
+    glAttachShader(shader_program, fragment_shader);
+    glLinkProgram(shader_program);
+    glDeleteShader(vertex_shader);
+    glDeleteShader(fragment_shader);
+    f32 vertices[] = {
+        -0.9f, -0.5f, 0.0f,  // left 
+        -0.0f, -0.5f, 0.0f,  // right
+        -0.45f, 0.5f, 0.0f  // top 
+    };
+    if(!glCreateProgram) OutputDebugStringA("failed to load glcreateprogram\n");
+    GLuint VBO, VAO;
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(f32), (void*)0);
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+    glClearColor(0.129f, 0.586f, 0.949f, 1.0f); // rgb(33,150,243)
+    glClear(GL_COLOR_BUFFER_BIT);
+    glUseProgram(shader_program);
+    glBindVertexArray(VAO);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+}
+
 LRESULT CALLBACK
 Win32MainWindowCallback(HWND window,
                         UINT message,
@@ -223,13 +286,13 @@ int WinMain(HINSTANCE instance,
     window_class.style = CS_OWNDC|CS_HREDRAW|CS_VREDRAW;
     window_class.lpfnWndProc = Win32MainWindowCallback;
     window_class.hInstance = instance;
-    window_class.lpszClassName = "BadTriangleWindowClass";
+    window_class.lpszClassName = "OpenGLInitialization";
     
     if(RegisterClassA(&window_class))
     {
         HWND window = CreateWindowEx(0,
                                      window_class.lpszClassName,
-                                     "BADTRIANGLE",
+                                     "OpenGLInitialization",
                                      WS_OVERLAPPEDWINDOW|WS_VISIBLE,
                                      CW_USEDEFAULT,
                                      CW_USEDEFAULT,
@@ -251,66 +314,7 @@ int WinMain(HINSTANCE instance,
                 int window_width = window_rect.right - window_rect.left;
                 int window_height = window_rect.bottom - window_rect.top;
                 if(window_height <= 0 || window_height <= 0) OutputDebugStringA("\nbad\n");
-                glViewport(0, 0, window_width, window_height);
-                char *vertex_shader_source = "#version 330 core\n"
-                    "layout (location = 0) in vec3 aPos;\n"
-                    "void main()\n"
-                    "{\n"
-                    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-                    "}\0";
-                char *fragment_shader_source = "#version 330 core\n"
-                    "out vec4 FragColor;\n"
-                    "void main()\n"
-                    "{\n"
-                    "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-                    "}\n\0";
-                GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-                glShaderSource(vertex_shader, 1, &vertex_shader_source, 0);
-                glCompileShader(vertex_shader);
-                int success;
-                glGetShaderiv(vertex_shader, GL_COMPILE_STATUS, &success);
-                if(!success)
-                {
-                    OutputDebugStringA("vertex_shader_failed");
-                }
-                
-                GLuint fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-                glShaderSource(fragment_shader, 1, &fragment_shader_source, 0);
-                glCompileShader(fragment_shader);
-                glGetShaderiv(fragment_shader, GL_COMPILE_STATUS, &success);
-                if(!success)
-                {
-                    OutputDebugStringA("compile_shader_failed");
-                }
-                
-                GLuint shader_program = glCreateProgram();
-                glAttachShader(shader_program, vertex_shader);
-                glAttachShader(shader_program, fragment_shader);
-                glLinkProgram(shader_program);
-                glDeleteShader(vertex_shader);
-                glDeleteShader(fragment_shader);
-                f32 vertices[] = {
-                    // first triangle
-                    -0.9f, -0.5f, 0.0f,  // left 
-                    -0.0f, -0.5f, 0.0f,  // right
-                    -0.45f, 0.5f, 0.0f  // top 
-                };
-                if(!glCreateProgram) OutputDebugStringA("failed to load glcreateprogram\n");
-                GLuint VBO, VAO;
-                glGenVertexArrays(1, &VAO);
-                glGenBuffers(1, &VBO);
-                glBindVertexArray(VAO);
-                glBindBuffer(GL_ARRAY_BUFFER, VBO);
-                glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-                glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(f32), (void*)0);
-                glEnableVertexAttribArray(0);
-                glBindBuffer(GL_ARRAY_BUFFER, 0);
-                glBindVertexArray(0);
-                glClearColor(0.129f, 0.586f, 0.949f, 1.0f); // rgb(33,150,243)
-                glClear(GL_COLOR_BUFFER_BIT);
-                glUseProgram(shader_program);
-                glBindVertexArray(VAO);
-                glDrawArrays(GL_TRIANGLES, 0, 3);
+                DrawTriangle(window_width, window_height);
                 SwapBuffers(GetDC(window));
                 Sleep(10000);
             }
