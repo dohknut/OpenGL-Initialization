@@ -127,7 +127,7 @@ Win32LoadWGLExtensions()
     }
 }
 
-internal b32
+internal void
 Win32SetupPixelFormat(HDC window_dc)
 {
     int format_index = 0;
@@ -163,7 +163,7 @@ Win32SetupPixelFormat(HDC window_dc)
     }
     
     PIXELFORMATDESCRIPTOR received_format;
-    return SetPixelFormat(window_dc, format_index, &received_format);
+    SetPixelFormat(window_dc, format_index, &received_format);
 }
 
 internal HGLRC
@@ -171,7 +171,7 @@ Win32InitOpenGL(HWND window)
 {
     HDC window_dc = GetDC(window);
     Win32LoadWGLExtensions();
-    if(!Win32SetupPixelFormat(window_dc)) return 0;
+    Win32SetupPixelFormat(window_dc);
     
     b32 modern_context = true;
     HGLRC glrc = 0;
