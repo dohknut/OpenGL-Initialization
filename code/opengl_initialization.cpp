@@ -29,7 +29,6 @@ global_var gl_gen_frame_buffers *glGenFramebuffers;
 global_var gl_gen_render_buffers *glGenRenderbuffers;
 global_var gl_get_shader_iv *glGetShaderiv;
 
-// TODO(Luke): Probably return success/error.
 internal void
 Win32LoadWGLExtensions()
 {
@@ -41,8 +40,7 @@ Win32LoadWGLExtensions()
     
     if(RegisterClassA(&window_class))
     {
-        HWND temporary_window = CreateWindowExA(
-                                                0,
+        HWND temporary_window = CreateWindowExA(0,
                                                 window_class.lpszClassName,
                                                 "OpenGLInitialization",
                                                 0,
@@ -129,7 +127,7 @@ Win32LoadWGLExtensions()
     }
 }
 
-internal void
+internal b32
 Win32SetupPixelFormat(HDC window_dc)
 {
     int format_index = 0;
@@ -165,7 +163,7 @@ Win32SetupPixelFormat(HDC window_dc)
     }
     
     PIXELFORMATDESCRIPTOR received_format;
-    SetPixelFormat(window_dc, format_index, &received_format);
+    return SetPixelFormat(window_dc, format_index, &received_format);
 }
 
 internal HGLRC
@@ -173,7 +171,7 @@ Win32InitOpenGL(HWND window)
 {
     HDC window_dc = GetDC(window);
     Win32LoadWGLExtensions();
-    Win32SetupPixelFormat(window_dc);
+    if(!Win32SetupPixelFormat(window_dc)) return 0;
     
     b32 modern_context = true;
     HGLRC glrc = 0;
@@ -245,7 +243,7 @@ void DrawTriangle(int window_width, int window_height)
     f32 vertices[] = {
         -0.9f, -0.5f, 0.0f,  // left 
         -0.0f, -0.5f, 0.0f,  // right
-        -0.45f, 0.5f, 0.0f  // top 
+        -0.45f, 0.5f, 0.0f   // top 
     };
     if(!glCreateProgram) OutputDebugStringA("failed to load glcreateprogram\n");
     GLuint VBO, VAO;
